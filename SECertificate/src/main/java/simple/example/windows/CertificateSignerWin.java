@@ -28,7 +28,7 @@ public class CertificateSignerWin {
 
 	public static void main(String[] args) throws KeyStoreException {
 
-		String PIN = "qwaszx12!";
+		String PIN = "*****";
 		Certificate[] certificates = null;
 		/* Obtendo a chave privada */
 
