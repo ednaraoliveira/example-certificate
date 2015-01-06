@@ -1,4 +1,4 @@
-package simple.example.windows;
+package simple.example.linux;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -8,9 +8,13 @@ import java.io.IOException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
 import java.security.PrivateKey;
+import java.security.Provider;
+import java.security.Security;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.Certificate;
+import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 
 import org.slf4j.Logger;
@@ -22,20 +26,30 @@ import br.gov.frameworkdemoiselle.certificate.signer.factory.PKCS7Factory;
 import br.gov.frameworkdemoiselle.certificate.signer.pkcs7.PKCS7Signer;
 import br.gov.frameworkdemoiselle.certificate.signer.pkcs7.bc.policies.ADRBCMS_2_1;
 
-public class CertificateSignerWin {
+public class CertificateSignerLinux {
 
-	private static final Logger logger = LoggerFactory.getLogger(CertificateSignerWin.class);
+	private static final Logger logger = LoggerFactory.getLogger(CertificateSignerLinux.class);
 
 	public static void main(String[] args) throws KeyStoreException {
 
+		String configName = "/home/01534562567/drivers.config";
 		String PIN = "qwaszx12!";
 		Certificate[] certificates = null;
+		
+
 		/* Obtendo a chave privada */
 
 		String alias;
 		try {
 			logger.info("-------- Fabrica do certificate --------");
-			KeyStore keyStore = KeyStoreLoaderFactory.factoryKeyStoreLoader().getKeyStore();
+
+            Provider p = new sun.security.pkcs11.SunPKCS11(configName);
+            Security.addProvider(p);
+
+            KeyStore keyStore = KeyStore.getInstance("PKCS11", "SunPKCS11-Provedor");
+            keyStore.load(null, PIN.toCharArray());
+
+			
 			alias = (String) keyStore.aliases().nextElement();
 			logger.info("alias ...........: {}", alias);
 			PrivateKey privateKey = (PrivateKey) keyStore.getKey(alias, PIN.toCharArray());
@@ -84,6 +98,12 @@ public class CertificateSignerWin {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (NoSuchProviderException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (CertificateException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
