@@ -36,7 +36,6 @@ public class CheckCertificateSignerLinux {
 
 			/* Objeto doSign */
 			PKCS7Signer signer = PKCS7Factory.getInstance().factoryDefault();
-			//signer.setSignaturePolicy(new ADRBCMS_2_0());
 
 			/* Valida o conteudo */
 			logger.info("Efetuando a validacao da assinatura.");

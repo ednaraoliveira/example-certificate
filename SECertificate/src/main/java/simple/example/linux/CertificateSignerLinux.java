@@ -54,14 +54,6 @@ public class CertificateSignerLinux {
 			logger.info("privateKey ......: {}", privateKey);
 
 			X509Certificate c = (X509Certificate) keyStore.getCertificate(alias);
-
-			
-            BasicCertificate bc = new BasicCertificate(c);
-            logger.info("Nome....................[{}]", bc.getNome());
-            logger.info("E-mail..................[{}]", bc.getEmail());
-            logger.info("Numero de serie.........[{}]", bc.getSerialNumber());
-            logger.info("Nivel do Certificado....[{}]", bc.getNivelCertificado());
-			
 			
 			byte[] content = "SERPRO".getBytes();
 			

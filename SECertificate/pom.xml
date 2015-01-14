@@ -22,22 +22,22 @@
 		<dependency>
 			<groupId>br.gov.frameworkdemoiselle.component</groupId>
 			<artifactId>demoiselle-certificate-core</artifactId>
-			<version>1.0.10-SNAPSHOT</version>
+			<version>1.0.9</version>
 		</dependency>
 		<dependency>
 			<groupId>br.gov.frameworkdemoiselle.component</groupId>
 			<artifactId>demoiselle-certificate-ca-icpbrasil</artifactId>
-			<version>1.0.10-SNAPSHOT</version>
+			<version>1.0.9</version>
 		</dependency>
 		<dependency>
 			<groupId>br.gov.frameworkdemoiselle.component</groupId>
 			<artifactId>demoiselle-certificate-criptography</artifactId>
-			<version>1.0.10-SNAPSHOT</version>
+			<version>1.0.9</version>
 		</dependency>
 		<dependency>
 			<groupId>br.gov.frameworkdemoiselle.component</groupId>
 			<artifactId>demoiselle-certificate-signer</artifactId>
-			<version>1.0.10-SNAPSHOT</version>
+			<version>1.0.6</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.commons</groupId>
