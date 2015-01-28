@@ -1,0 +1,130 @@
+#Colocar o caminho do java home
+
+
+#PATH=$JAVA_HOME/bin:$PATH
+
+echo $JAVA_HOME
+
+#NAO ALTERAR!
+#DSANAME="SERPRO"
+
+#DIGITAL_CERTIFICATE="assinatura_codigo.pfx"
+#DIGITAL_CERTIFICATE="newcert.p12"
+#DIGITAL_CERTIFICATE="applet_keystore.jks"
+
+#apelido do certificado, rodar o script uma primeira vez no console e copiar o apelido cara este script
+#ALIAS="(eTCAPI) HUMBERTO DE MELO PACHECO's ICP-Brasil ID"
+#ALIAS="{13c3a71b-ec23-47ae-b44b-eaf903390c30}"
+#ALIAS="spock"
+
+
+
+
+#echo "Digite a senha do certificado digital, seguido de [ENTER]:" 
+
+#read -s PASSWORD
+
+#ARTIFACT_VERSION="2.0.0"
+
+#JARPATH="/home/01534562567/workspace_certificate/exemplo200/libs-certificate/assinados/"
+
+#echo "JARPATH >>>>>>>>>>>> " $JARPATH ">>>>>>>>>>>>>>>>>" $PASSWORD
+
+#jar_security_applet_customizada="demoiselle-certificate-applet-customizada-1.0.0.jar"
+#jar_security_applet="demoiselle-certificate-applet-2.0.0-SNAPSHOT.jar"
+#jar_security_core="demoiselle-certificate-core-2.0.0-SNAPSHOT.jar"
+#jar_security_signer="demoiselle-certificate-signer-2.0.0-SNAPSHOT.jar"
+#jar_security_policy_engine="demoiselle-certificate-policy-engine-2.0.0-SNAPSHOT.jar"
+#jar_security_timestamp="demoiselle-certificate-timestamp-2.0.0-SNAPSHOT.jar"
+#jar_security_criptography="demoiselle-certificate-criptography-2.0.0-SNAPSHOT.jar"
+#jar_security_ca_icpbrasil="demoiselle-certificate-ca-icpbrasil-2.0.0-SNAPSHOT.jar"
+#jar_security_ca_icpbrasil_hom="demoiselle-certificate-ca-icpbrasil-homologacao-2.0.0-SNAPSHOT.jar"
+
+#Parametros customizados a serem incluidos no manifesto
+#manifest_addition="manifest-addition.txt"
+
+
+
+#remove os artefatos antigos da aplicacao
+#echo "Removendo os artefatos antigos."
+#for jarfile in $(ls $JARPATH/*.jar); do
+#	rm $jarfile
+#done
+
+#Copia os componentes de seguranca demoiselle
+#echo "Copiando os componentes de seguranca demoiselle."
+#cp /home/01534562567/workspace_certificate/exemplo200/libs-certificate/$jar_security_applet_customizada $JARPATH
+#cp /home/01534562567/workspace_certificate/exemplo200/libs-certificate/$jar_security_applet $JARPATH
+#cp /home/01534562567/workspace_certificate/exemplo200/libs-certificate/$jar_security_core $JARPATH
+#cp /home/01534562567/workspace_certificate/exemplo200/libs-certificate/$jar_security_signer $JARPATH
+#cp /home/01534562567/workspace_certificate/exemplo200/libs-certificate/$jar_security_policy_engine $JARPATH
+#cp /home/01534562567/workspace_certificate/exemplo200/libs-certificate/$jar_security_timestamp $JARPATH
+#cp /home/01534562567/workspace_certificate/exemplo200/libs-certificate/$jar_security_criptography $JARPATH
+#cp /home/01534562567/workspace_certificate/exemplo200/libs-certificate/$jar_security_ca_icpbrasil $JARPATH
+#cp /home/01534562567/workspace_certificate/exemplo200/libs-certificate/$jar_security_ca_icpbrasil_hom $JARPATH
+
+#Copia o plugin.jar
+#echo "Copiando o plugin.jar"
+#cp $JAVA_HOME/jre/lib/plugin.jar $JARPATH
+
+#copia o Bouncy Castle
+#wget http://mirrors.ibiblio.org/maven2/org/bouncycastle/bcprov-jdk15on/1.51/bcprov-jdk15on-1.51.jar -P $JARPATH
+#wget http://mirrors.ibiblio.org/maven2/org/bouncycastle/bcmail-jdk15on/1.51/bcmail-jdk15on-1.51.jar -P $JARPATH 
+#wget http://mirrors.ibiblio.org/maven2/org/bouncycastle/bcpkix-jdk15on/1.51/bcpkix-jdk15on-1.51.jar -P $JARPATH  
+#cp /home/01534562567/workspace_certificate/exemplo200/libs-certificate/bcprov-jdk15on-1.51.jar $JARPATH
+#cp /home/01534562567/workspace_certificate/exemplo200/libs-certificate/bcmail-jdk15on-1.51.jar $JARPATH
+#cp /home/01534562567/workspace_certificate/exemplo200/libs-certificate/bcpkix-jdk15on-1.51.jar $JARPATH
+
+
+#Copia o slf4j e log4j
+#wget http://mirrors.ibiblio.org/maven2/org/slf4j/slf4j-api/1.6.1/slf4j-api-1.6.1.jar -P $JARPATH
+#wget http://mirrors.ibiblio.org/maven2/org/slf4j/slf4j-log4j12/1.6.1/slf4j-log4j12-1.6.1.jar -P $JARPATH
+#wget http://mirrors.ibiblio.org/maven2/log4j/log4j/1.2.17/log4j-1.2.17.jar -P $JARPATH
+#cp /home/01534562567/workspace_certificate/exemplo200/libs-certificate/log4j-1.2.17.jar $JARPATH
+#cp /home/01534562567/workspace_certificate/exemplo200/libs-certificate/slf4j-api-1.6.1.jar $JARPATH
+#cp /home/01534562567/workspace_certificate/exemplo200/libs-certificate/slf4j-log4j12-1.6.1.jar $JARPATH
+#cp /home/01534562567/workspace_certificate/exemplo200/libs-certificate/commons-codec-1.6.jar $JARPATH
+#cp /home/01534562567/workspace_certificate/exemplo200/libs-certificate/commons-io-1.3.2.jar $JARPATH
+#cp /home/01534562567/workspace_certificate/exemplo200/libs-certificate/commons-logging-1.1.3.jar $JARPATH
+#cp /home/01534562567/workspace_certificate/exemplo200/libs-certificate/httpclient-4.3.4.jar $JARPATH
+#cp /home/01534562567/workspace_certificate/exemplo200/libs-certificate/httpcore-4.3.2.jar $JARPATH
+#cp /home/01534562567/workspace_certificate/exemplo200/libs-certificate/myTimestampImpl-0.0.1-SNAPSHOT.jar $JARPATH
+#cp /home/01534562567/workspace_certificate/exemplo200/libs-certificate/jackson-core-asl-1.9.9.jar $JARPATH
+#cp /home/01534562567/workspace_certificate/exemplo200/libs-certificate/jackson-mapper-asl-1.9.9.jar $JARPATH
+
+
+
+
+#$JAVA_HOME/bin/jarsigner -keystore NONE -storetype PKCS11 -providerClass sun.security.pkcs11.SunPKCS11 -providerArg token.config -storepass $PASSWORD -sigfile $DSANAME -signedjar $JARPATH/slf4j-log4j12-1.6.1-assinado.jar $JARPATH/slf4j-log4j12-1.6.1.jar "$ALIAS"
+
+#for jarfile in $(ls $JARPATH/*.jar); do
+
+#        jarfile_signed="${jarfile%.jar}-assinado.jar"
+
+#        echo "Removendo as assinaturas anteriores que possam existir nos artefatos"
+#        zip -d $jarfile /META-INF/BCKEY.* /META-INF/SERPRO.*
+
+#        echo "Gerando jar assinado para $jarfile em $jarfile_signed"
+
+	    #lista os dados do token, inclusive o apelido (descomentar somente quando for necessario obter o alias)
+	    #keytool -keystore NONE -storetype PKCS11 -providerClass sun.security.pkcs11.SunPKCS11 -providerArg token.config -storepass $PASSWORD -list
+
+            #Inclui os dados adicionais de seguranca do jar
+            $JAVA_HOME/bin/jar uvfm $jarfile $manifest_addition
+
+	    #assina o jar com um certificado em Token / Smartcard
+	    #$JAVA_HOME/bin/jarsigner -keystore NONE -storetype PKCS11 -providerClass sun.security.pkcs11.SunPKCS11 -providerArg token.config -storepass $PASSWORD -sigfile $DSANAME -signedjar $jarfile_signed $jarfile "$ALIAS" -tsa https://timestamp.geotrust.com/tsa
+
+            #Assina o jar com um certificado armazenado em disco
+	    #$JAVA_HOME/bin/jarsigner -keystore /home/07721825741/Documentos/Trabalho/Scripts/certificado-assinatura-codigo/$DIGITAL_CERTIFICATE -storetype PKCS12 -storepass $PASSWORD -sigfile $DSANAME -signedjar $jarfile_signed $jarfile $ALIAS #-tsa https://timestamp.geotrust.com/tsa
+
+            #Efetua a verificacao do jar assinado
+            #$JAVA_HOME/bin/jarsigner -verify -verbose -keystore NONE -storetype PKCS11 -providerClass sun.security.pkcs11.SunPKCS11 -providerArg token.config -storepass $PASSWORD $jarfile_signed
+
+            #Meu Jeito
+#            $JAVA_HOME/bin/jarsigner -keystore applet_keystore.jks -signedjar $jarfile_signed $jarfile applet_alias -keypass $PASSWORD
+
+
+	    #Remove os artefatos nao assinados
+#	    rm $jarfile
+#done

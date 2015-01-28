@@ -1,0 +1,7 @@
+Permissions: all-permissions
+Codebase: *
+Application-Name: Applet Customizada
+Application-Library-Allowable-Codebase: *
+Caller-Allowable-Codebase: *
+Trusted-Only: true
+Trusted-Library: true
