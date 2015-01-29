@@ -9,6 +9,9 @@ import java.security.cert.Certificate;
 import java.util.Enumeration;
 
 import javax.servlet.ServletException;
+import javax.servlet.annotation.HttpConstraint;
+import javax.servlet.annotation.HttpMethodConstraint;
+import javax.servlet.annotation.ServletSecurity;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -19,6 +22,7 @@ import org.apache.commons.io.IOUtils;
 import br.gov.frameworkdemoiselle.timestamp.connector.TimeStampOperator;
 
 @WebServlet("/carimbo")
+@ServletSecurity(value = @HttpConstraint(rolesAllowed = "teste"))
 public class TimestampGeneratorServlet extends HttpServlet {
 
 	private static final long serialVersionUID = 1L;
@@ -33,10 +37,10 @@ public class TimestampGeneratorServlet extends HttpServlet {
 	@Override
 	public void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		
+
 		System.out.println(request.getHeader("content-type"));
 		System.out.println(IOUtils.toString(request.getInputStream()));
-		
+
 		byte[] content = IOUtils.toByteArray(request.getInputStream());
 
 		PrivateKey privateKey = null;
@@ -78,7 +82,7 @@ public class TimestampGeneratorServlet extends HttpServlet {
 				certificates, content);
 
 		content = timeStampOperator.invoke(reqTimestamp);
-		
+
 		response.setStatus(HttpServletResponse.SC_OK);
 		response.getOutputStream().write(content);
 		response.getOutputStream().flush();
@@ -86,4 +90,3 @@ public class TimestampGeneratorServlet extends HttpServlet {
 	}
 
 }
-
