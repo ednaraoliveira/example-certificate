@@ -25,7 +25,6 @@ import br.gov.frameworkdemoiselle.certificate.applet.certificate.ICPBrasilCertif
 import br.gov.frameworkdemoiselle.certificate.signer.factory.PKCS7Factory;
 import br.gov.frameworkdemoiselle.certificate.signer.pkcs7.PKCS7Signer;
 import br.gov.frameworkdemoiselle.policy.engine.factory.PolicyFactory;
-import br.gov.frameworkdemoiselle.timestamp.Token;
 
 public class App extends AbstractAppletExecute {
 
@@ -37,13 +36,7 @@ public class App extends AbstractAppletExecute {
             /* Carregando o conteudo a ser assinado */
             String documento = AbstractAppletExecute.getFormField(applet, "mainForm", "documento");
             
-            /* Obtendo o Token */
             JSObject window = JSObject.getWindow(applet);
-            
-            logger.info("Invocando JS teste() via Applet... ");
-
-            window.call("teste", null);
-
             
             if (documento.length() == 0) {
                 JOptionPane.showMessageDialog(applet, "Por favor, escolha um documento para assinar", "Error", JOptionPane.ERROR_MESSAGE);

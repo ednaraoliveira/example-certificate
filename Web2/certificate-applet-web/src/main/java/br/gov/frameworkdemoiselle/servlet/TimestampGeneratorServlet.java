@@ -37,17 +37,14 @@ public class TimestampGeneratorServlet extends HttpServlet {
 	@Override
 	public void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-
-		System.out.println(request.getHeader("content-type"));
-		System.out.println(IOUtils.toString(request.getInputStream()));
-
-		byte[] content = IOUtils.toByteArray(request.getInputStream());
+		
+				byte[] content = IOUtils.toByteArray(request.getInputStream());
 
 		PrivateKey privateKey = null;
 		Certificate[] certificates = null;
 
 		String configName = "/home/01534562567/drivers.config";
-		String password = "qwaszx12!";
+		String password = "******";
 
 		Provider p = new sun.security.pkcs11.SunPKCS11(configName);
 		Security.addProvider(p);
@@ -73,20 +70,27 @@ public class TimestampGeneratorServlet extends HttpServlet {
 					.getEntry(alias, protParam);
 			privateKey = pkEntry.getPrivateKey();
 
+			// requisitando um carimbo de tempo
+			TimeStampOperator timeStampOperator = new TimeStampOperator();
+			byte[] reqTimestamp = timeStampOperator.createRequest(privateKey,
+					certificates, content);
+
+			content = timeStampOperator.invoke(reqTimestamp);
+			
+			response.setContentType("application/octet-stream");
+			response.setStatus(HttpServletResponse.SC_OK);
+			response.getOutputStream().write(content);
+			response.getOutputStream().flush();
+			response.getOutputStream().close();
+
+			
+			
+			
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 
-		TimeStampOperator timeStampOperator = new TimeStampOperator();
-		byte[] reqTimestamp = timeStampOperator.createRequest(privateKey,
-				certificates, content);
-
-		content = timeStampOperator.invoke(reqTimestamp);
-
-		response.setStatus(HttpServletResponse.SC_OK);
-		response.getOutputStream().write(content);
-		response.getOutputStream().flush();
-		response.getOutputStream().close();
 	}
 
 }

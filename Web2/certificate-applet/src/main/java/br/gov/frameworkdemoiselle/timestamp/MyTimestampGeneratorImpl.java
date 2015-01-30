@@ -1,22 +1,14 @@
 package br.gov.frameworkdemoiselle.timestamp;
 
-import java.io.BufferedReader;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.net.URLConnection;
 import java.security.PrivateKey;
 import java.security.cert.Certificate;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.ByteArrayEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClientBuilder;
-import org.bouncycastle.util.encoders.Base64;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -57,10 +49,6 @@ public class MyTimestampGeneratorImpl implements TimeStampGenerator {
 
 		byte[] timestamp = null;
 
-		final String TOKEN = "Token " + Token.getValue();
-
-		System.out.println("--------------- CALL SERVLET ------------");
-
 		HttpURLConnection connection = null;
 		try {
 			URL url = new URL("http://localhost:8080/certificate-applet-web/carimbo");
@@ -77,11 +65,8 @@ public class MyTimestampGeneratorImpl implements TimeStampGenerator {
 		    os.flush();
 		    os.close();
 		    
-		    System.out.println("STATUS: " + connection.getResponseCode() + " - " + connection.getResponseMessage());
-		    
 		    InputStream is = connection.getInputStream();
 		    timestamp = IOUtils.toByteArray(is);
-		    System.out.println(IOUtils.toString(is));
 		    is.close();
 
 		} catch (Exception e) {

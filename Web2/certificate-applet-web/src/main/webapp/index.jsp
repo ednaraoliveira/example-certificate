@@ -29,7 +29,7 @@
 				<td><applet
 				code="br.gov.frameworkdemoiselle.certificate.applet.view.JPanelApplet"
 				width=480 height=350 MAYSCRIPT
-				archive="certificate-applet-1.0.0-assinado.jar,
+				archive="certificate-applet-1.0.1-assinado.jar,
                                 demoiselle-certificate-applet-2.0.0-SNAPSHOT-assinado.jar,
                                 demoiselle-certificate-core-2.0.0-SNAPSHOT-assinado.jar,
                                 demoiselle-certificate-signer-2.0.0-SNAPSHOT-assinado.jar,
