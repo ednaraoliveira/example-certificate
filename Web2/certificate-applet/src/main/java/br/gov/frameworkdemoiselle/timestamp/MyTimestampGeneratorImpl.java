@@ -51,7 +51,7 @@ public class MyTimestampGeneratorImpl implements TimeStampGenerator {
 
 		HttpURLConnection connection = null;
 		try {
-			URL url = new URL("http://localhost:8080/certificate-applet-web/carimbo");
+			URL url = new URL("http://10.32.112.107:8080/certificate-applet-web/carimbo");
 			
 		    connection = (HttpURLConnection)url.openConnection();
 		    connection.setRequestMethod("POST");
