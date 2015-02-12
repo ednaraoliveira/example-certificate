@@ -14,18 +14,15 @@ import java.security.cert.CertificateException;
 import java.util.Enumeration;
 
 import javax.servlet.ServletException;
-import javax.servlet.annotation.HttpConstraint;
-import javax.servlet.annotation.ServletSecurity;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
+import org.bouncycastle.tsp.TimeStampResponse;
 
 import br.gov.frameworkdemoiselle.certificate.exception.CertificateCoreException;
-import br.gov.frameworkdemoiselle.certificate.keystore.loader.InvalidPinException;
-import br.gov.frameworkdemoiselle.certificate.keystore.loader.PKCS11NotFoundException;
 import br.gov.frameworkdemoiselle.timestamp.connector.TimeStampOperator;
 
 @WebServlet("/carimbo")
@@ -90,18 +87,20 @@ public class TimestampGeneratorServlet extends HttpServlet {
 			response.getOutputStream().write(content);
 			response.getOutputStream().flush();
 			response.getOutputStream().close();
+			
+			
 		} catch (IOException | CertificateException | KeyStoreException
 				| NoSuchProviderException | NoSuchAlgorithmException
 				| UnrecoverableEntryException ex) {
-			System.out.println("-------------- INI - Catch");
-			ex.printStackTrace();
-			System.out.println("-------------- FIM - Catch");
-			throw new CertificateCoreException(ex.getMessage(), ex.getCause());
+			throw new CertificateCoreException("AS OUTRAS", ex.getCause());
 		} catch (CertificateCoreException ex) {
-			System.out.println("-------------- INI - Catch CertificateCoreException");
-			response.setStatus(HttpServletResponse.SC_NOT_ACCEPTABLE);
-			System.out.println("-------------- FIM - Catch CertificateCoreException");
-			//throw new CertificateCoreException(ex.getMessage(), ex.getCause());
+			response.setStatus(HttpServletResponse.SC_EXPECTATION_FAILED);
+			response.setHeader("exception", ex.getMessage());
+			System.out.println("MUDEI");
+			//throw new ServletException(ex.getMessage());
+		}finally{
+			//TODO
+
 		} 
 		
 		

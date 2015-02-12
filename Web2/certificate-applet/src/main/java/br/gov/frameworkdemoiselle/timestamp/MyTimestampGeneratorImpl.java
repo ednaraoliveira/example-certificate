@@ -4,13 +4,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.ProtocolException;
 import java.net.URL;
 import java.security.PrivateKey;
 import java.security.cert.Certificate;
 
-import javax.xml.ws.http.HTTPException;
+import javax.servlet.ServletException;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -57,36 +55,39 @@ public class MyTimestampGeneratorImpl implements TimeStampGenerator {
 		HttpURLConnection connection = null;
 
 		try {
-			URL url = new URL(
-					"http://10.32.112.107:8080/certificate-applet-web/carimbo");
+			// Create connection
+			URL url = new URL("http://10.32.112.107:8080/certificate-applet-web/carimbo");
 
 			connection = (HttpURLConnection) url.openConnection();
 
 			connection.setRequestMethod("POST");
+			//connection.setRequestProperty("Content-Length",	"" + Integer.toString(content.length));
+			connection.setRequestProperty("Content-Length",	"" + 1);
 			connection.setUseCaches(false);
+			connection.setDoInput(true);
 			connection.setDoOutput(true);
 			connection.setRequestProperty("Content-Type",
 					"application/octet-stream");
-			connection.connect();
-		} catch (Exception e) {
-			throw new CertificateCoreException("Erro na conexão com o serviço", e.getCause());
-		}
 
-		try {
+			// Send request
+
 			OutputStream os = connection.getOutputStream();
 			os.write(content);
 			os.flush();
 			os.close();
-		} catch (IOException e) {
-			throw new CertificateCoreException("Erro ao enviar conteúdo", e.getCause());
-		}
 
-		try {
+			// Get Response
 			InputStream is = connection.getInputStream();
 			timestamp = IOUtils.toByteArray(is);
 			is.close();
+			
 		} catch (IOException e) {
-			throw new CertificateCoreException("Erro ao receber carimbo", e.getCause());
+			e.printStackTrace();
+			throw new CertificateCoreException(connection.getHeaderField("exception"));
+		} finally {
+			if (connection != null) {
+				connection.disconnect();
+			}
 		}
 
 		logger.info("------------- FIM --------------");
