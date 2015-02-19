@@ -8,24 +8,23 @@ import java.net.URL;
 import java.security.PrivateKey;
 import java.security.cert.Certificate;
 
-import javax.servlet.ServletException;
-
 import org.apache.commons.io.IOUtils;
-import org.apache.http.impl.client.CloseableHttpClient;
+import org.bouncycastle.asn1.ocsp.ResponderID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import br.gov.frameworkdemoiselle.certificate.Priority;
 import br.gov.frameworkdemoiselle.certificate.exception.CertificateCoreException;
 import br.gov.frameworkdemoiselle.certificate.timestamp.TimeStampGenerator;
 import br.gov.frameworkdemoiselle.timestamp.connector.TimeStampOperator;
 
+@Priority(Priority.MAX_PRIORITY)
 public class MyTimestampGeneratorImpl implements TimeStampGenerator {
 
 	private static final Logger logger = LoggerFactory
 			.getLogger(MyTimestampGeneratorImpl.class);
 
 	private byte[] content;
-	private CloseableHttpClient client;
 
 	/**
 	 * Inicializa os atributos necessarios para obter o carimbo de tempo
@@ -61,29 +60,45 @@ public class MyTimestampGeneratorImpl implements TimeStampGenerator {
 			connection = (HttpURLConnection) url.openConnection();
 
 			connection.setRequestMethod("POST");
-			//connection.setRequestProperty("Content-Length",	"" + Integer.toString(content.length));
-			connection.setRequestProperty("Content-Length",	"" + 1);
+			connection.setRequestProperty("Content-Length",	"" + Integer.toString(content.length));
 			connection.setUseCaches(false);
 			connection.setDoInput(true);
 			connection.setDoOutput(true);
-			connection.setRequestProperty("Content-Type",
-					"application/octet-stream");
+			connection.setRequestProperty("Content-Type", "application/octet-stream");
 
 			// Send request
-
 			OutputStream os = connection.getOutputStream();
 			os.write(content);
 			os.flush();
 			os.close();
 
-			// Get Response
-			InputStream is = connection.getInputStream();
-			timestamp = IOUtils.toByteArray(is);
-			is.close();
+//			int status = connection.getResponseCode();
+//			if (status == 500){
+//				if (connection.getContentType().equals("application/octet-stream")){
+//					connection.getHeaderField("message");
+////					String message = IOUtils.toString(is);
+//					throw new CertificateCoreException("TEEST");
+//				}
+//			}
+//			
+//			if (status == 200){
+//				InputStream is = connection.getInputStream();
+//				timestamp = IOUtils.toByteArray(is);
+//				is.close();
+//			}
+			
+			
+			System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
+			System.out.println(connection.getResponseCode() + " --- " + connection.getResponseMessage());
+			System.out.println(connection.getContentType());
+			System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
+			throw new CertificateCoreException(connection.getHeaderField("message"));
+			
+			
 			
 		} catch (IOException e) {
+
 			e.printStackTrace();
-			throw new CertificateCoreException(connection.getHeaderField("exception"));
 		} finally {
 			if (connection != null) {
 				connection.disconnect();
@@ -106,7 +121,7 @@ public class MyTimestampGeneratorImpl implements TimeStampGenerator {
 	 */
 	public void validateTimeStamp(byte[] content, byte[] response)
 			throws CertificateCoreException {
-		TimeStampOperator timeStampOperator = new TimeStampOperator();
-		timeStampOperator.validate(content, response);
+//		TimeStampOperator timeStampOperator = new TimeStampOperator();
+//		timeStampOperator.validate(content, response);
 	}
 }

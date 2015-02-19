@@ -1,6 +1,7 @@
 package br.gov.frameworkdemoiselle.servlet;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
@@ -20,7 +21,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
-import org.bouncycastle.tsp.TimeStampResponse;
 
 import br.gov.frameworkdemoiselle.certificate.exception.CertificateCoreException;
 import br.gov.frameworkdemoiselle.timestamp.connector.TimeStampOperator;
@@ -48,7 +48,7 @@ public class TimestampGeneratorServlet extends HttpServlet {
 		Certificate[] certificates = null;
 
 		String configName = "/home/01534562567/drivers.config";
-		String password = "***";
+		String password = "****";
 
 		Provider p = new sun.security.pkcs11.SunPKCS11(configName);
 		Security.addProvider(p);
@@ -83,21 +83,41 @@ public class TimestampGeneratorServlet extends HttpServlet {
 			content = timeStampOperator.invoke(reqTimestamp);
 
 			response.setContentType("application/octet-stream");
-			response.setStatus(HttpServletResponse.SC_OK);
 			response.getOutputStream().write(content);
 			response.getOutputStream().flush();
 			response.getOutputStream().close();
+
 			
-			
-		} catch (IOException | CertificateException | KeyStoreException
-				| NoSuchProviderException | NoSuchAlgorithmException
-				| UnrecoverableEntryException ex) {
-			throw new CertificateCoreException("AS OUTRAS", ex.getCause());
-		} catch (CertificateCoreException ex) {
-			response.setStatus(HttpServletResponse.SC_EXPECTATION_FAILED);
-			response.setHeader("exception", ex.getMessage());
-			System.out.println("MUDEI");
-			//throw new ServletException(ex.getMessage());
+		} catch (KeyStoreException e) {
+			response.setHeader("exceptionMessage", e.getMessage());
+			e.printStackTrace();
+		} catch (NoSuchProviderException e) {
+			response.setHeader("exceptionMessage", e.getMessage());
+			e.printStackTrace();
+		} catch (NoSuchAlgorithmException e) {
+			response.setHeader("exceptionMessage", e.getMessage());
+			e.printStackTrace();
+		} catch (UnrecoverableEntryException e) {
+			response.setHeader("exceptionMessage", e.getMessage());
+			e.printStackTrace();
+		} catch (CertificateException e) {
+			response.setHeader("exceptionMessage", e.getMessage());
+			e.printStackTrace();			
+		} catch (CertificateCoreException e) {
+			response.setContentType("text/plain");
+			response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+			response.setHeader("message", e.getMessage());
+			response.getOutputStream().write("XPTO".getBytes());
+			response.getOutputStream().flush();
+			response.getOutputStream().close();
+//			
+//			response.setHeader("message", e.getMessage());
+//			response.sendError(501, e.getMessage());
+//			e.printStackTrace();
+		} catch (IOException e) {
+			response.setHeader("exceptionMessage", e.getMessage());
+			e.printStackTrace();
+
 		}finally{
 			//TODO
 
