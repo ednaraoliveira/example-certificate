@@ -3,13 +3,13 @@ package br.gov.frameworkdemoiselle.timestamp;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.ConnectException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.security.PrivateKey;
 import java.security.cert.Certificate;
 
 import org.apache.commons.io.IOUtils;
-import org.bouncycastle.asn1.ocsp.ResponderID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,66 +47,68 @@ public class MyTimestampGeneratorImpl implements TimeStampGenerator {
 	 * @return O carimbo de tempo retornado pelo serviço
 	 */
 	public byte[] generateTimeStamp() throws CertificateCoreException {
-		logger.info("------------- MyTimestampGeneratorImpl.generateTimeStamp() --------------");
 
 		byte[] timestamp = null;
-
 		HttpURLConnection connection = null;
 
 		try {
-			// Create connection
-			URL url = new URL("http://10.32.112.107:8080/certificate-applet-web/carimbo");
+			// Cria a conexão com o serviço que requisita o carimbo de Tempo
+			URL url = new URL("http://localhost:8080/certificate-applet-web/carimbo");
 
 			connection = (HttpURLConnection) url.openConnection();
 
 			connection.setRequestMethod("POST");
-			connection.setRequestProperty("Content-Length",	"" + Integer.toString(content.length));
 			connection.setUseCaches(false);
 			connection.setDoInput(true);
 			connection.setDoOutput(true);
-			connection.setRequestProperty("Content-Type", "application/octet-stream");
+			connection.setRequestProperty("Content-Type","application/octet-stream");
 
-			// Send request
+			// Envi o conteúdo
 			OutputStream os = connection.getOutputStream();
 			os.write(content);
 			os.flush();
 			os.close();
 
-//			int status = connection.getResponseCode();
-//			if (status == 500){
-//				if (connection.getContentType().equals("application/octet-stream")){
-//					connection.getHeaderField("message");
-////					String message = IOUtils.toString(is);
-//					throw new CertificateCoreException("TEEST");
-//				}
-//			}
-//			
-//			if (status == 200){
-//				InputStream is = connection.getInputStream();
-//				timestamp = IOUtils.toByteArray(is);
-//				is.close();
-//			}
+			// Trata o status da conexão
+			int status = connection.getResponseCode();
 			
-			
-			System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
-			System.out.println(connection.getResponseCode() + " --- " + connection.getResponseMessage());
-			System.out.println(connection.getContentType());
-			System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
-			throw new CertificateCoreException(connection.getHeaderField("message"));
-			
-			
-			
-		} catch (IOException e) {
+			if (status == 500) {
+				if (connection.getContentType().equals("text/plain")) {
+					String message = IOUtils.toString(connection.getErrorStream());
+					throw new CertificateCoreException(message);
+				}
+			}
 
-			e.printStackTrace();
+			if (status == 200) {
+				if (connection.getContentType().equals("application/octet-stream")) {
+					InputStream is = connection.getInputStream();
+					timestamp = IOUtils.toByteArray(is);
+					is.close();
+				}
+			}
+			
+			if (status == 403){
+				throw new CertificateCoreException("HTTP Status 403 - JBWEB000015: Access to the requested resource has been denied");
+			}
+			
+			if (status == 401){
+				throw new CertificateCoreException("HTTP Status 401");
+			}
+
+			if (timestamp == null){
+				throw new CertificateCoreException("Carimbo de Tempo não foi gerado");
+			}
+			
+			
+		} catch ( ConnectException e) {
+			throw new CertificateCoreException("Erro ao conectar ao serviço que solicita carimbo de tempo");
+		} catch ( IOException e) {
+			throw new RuntimeException(e);			
 		} finally {
 			if (connection != null) {
 				connection.disconnect();
 			}
 		}
-
-		logger.info("------------- FIM --------------");
-
 		return timestamp;
 	}
 
@@ -121,7 +123,7 @@ public class MyTimestampGeneratorImpl implements TimeStampGenerator {
 	 */
 	public void validateTimeStamp(byte[] content, byte[] response)
 			throws CertificateCoreException {
-//		TimeStampOperator timeStampOperator = new TimeStampOperator();
-//		timeStampOperator.validate(content, response);
+		TimeStampOperator timeStampOperator = new TimeStampOperator();
+		timeStampOperator.validate(content, response);
 	}
 }

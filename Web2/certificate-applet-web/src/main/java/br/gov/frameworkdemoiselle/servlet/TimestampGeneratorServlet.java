@@ -1,34 +1,36 @@
 package br.gov.frameworkdemoiselle.servlet;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.security.KeyStore;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
-import java.security.NoSuchProviderException;
 import java.security.PrivateKey;
 import java.security.Provider;
 import java.security.Security;
-import java.security.UnrecoverableEntryException;
 import java.security.cert.Certificate;
-import java.security.cert.CertificateException;
 import java.util.Enumeration;
 
 import javax.servlet.ServletException;
+import javax.servlet.annotation.HttpConstraint;
+import javax.servlet.annotation.ServletSecurity;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import br.gov.frameworkdemoiselle.certificate.exception.CertificateCoreException;
 import br.gov.frameworkdemoiselle.timestamp.connector.TimeStampOperator;
 
 @WebServlet("/carimbo")
-// @ServletSecurity(value = @HttpConstraint(rolesAllowed = "teste"))
+@ServletSecurity(value = @HttpConstraint(rolesAllowed = "teste"))
 public class TimestampGeneratorServlet extends HttpServlet {
 
+	private static final Logger logger = LoggerFactory
+			.getLogger(TimestampGeneratorServlet.class);
+
+	
 	private static final long serialVersionUID = 1L;
 
 	@Override
@@ -42,13 +44,13 @@ public class TimestampGeneratorServlet extends HttpServlet {
 	public void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 
-		byte[] content = IOUtils.toByteArray(request.getInputStream());
-
+		
 		PrivateKey privateKey = null;
 		Certificate[] certificates = null;
+		byte[] content = null;
 
 		String configName = "/home/01534562567/drivers.config";
-		String password = "****";
+		String password = "";
 
 		Provider p = new sun.security.pkcs11.SunPKCS11(configName);
 		Security.addProvider(p);
@@ -75,7 +77,16 @@ public class TimestampGeneratorServlet extends HttpServlet {
 					.getEntry(alias, protParam);
 			privateKey = pkEntry.getPrivateKey();
 
-			// requisitando um carimbo de tempo
+			//Lendo o Conteúdo enviado
+			String contentType = request.getContentType();
+			if ("application/octet-stream".equals(contentType)|| contentType.isEmpty() || "application/x-www-form-urlencoded".equals(contentType)) {
+				content = IOUtils.toByteArray(request.getInputStream());
+			} else{
+				response.setContentType("text/plain");
+				response.setStatus(415);
+			}
+			
+			//requisitando um carimbo de tempo
 			TimeStampOperator timeStampOperator = new TimeStampOperator();
 			byte[] reqTimestamp = timeStampOperator.createRequest(privateKey,
 					certificates, content);
@@ -87,44 +98,21 @@ public class TimestampGeneratorServlet extends HttpServlet {
 			response.getOutputStream().flush();
 			response.getOutputStream().close();
 
-			
-		} catch (KeyStoreException e) {
-			response.setHeader("exceptionMessage", e.getMessage());
-			e.printStackTrace();
-		} catch (NoSuchProviderException e) {
-			response.setHeader("exceptionMessage", e.getMessage());
-			e.printStackTrace();
-		} catch (NoSuchAlgorithmException e) {
-			response.setHeader("exceptionMessage", e.getMessage());
-			e.printStackTrace();
-		} catch (UnrecoverableEntryException e) {
-			response.setHeader("exceptionMessage", e.getMessage());
-			e.printStackTrace();
-		} catch (CertificateException e) {
-			response.setHeader("exceptionMessage", e.getMessage());
-			e.printStackTrace();			
 		} catch (CertificateCoreException e) {
 			response.setContentType("text/plain");
-			response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-			response.setHeader("message", e.getMessage());
-			response.getOutputStream().write("XPTO".getBytes());
+			response.setStatus(500);
+			response.getOutputStream().write(e.getMessage().getBytes());
 			response.getOutputStream().flush();
 			response.getOutputStream().close();
-//			
-//			response.setHeader("message", e.getMessage());
-//			response.sendError(501, e.getMessage());
-//			e.printStackTrace();
-		} catch (IOException e) {
-			response.setHeader("exceptionMessage", e.getMessage());
-			e.printStackTrace();
+		} catch (Exception e) {
+			response.setContentType("text/plain");
+			response.setStatus(500);
+			response.getOutputStream().write("Erro ao fazer load do certificado habilitado para requisitar carimbo de tempo".getBytes());
+			response.getOutputStream().flush();
+			response.getOutputStream().close();
+		} finally {
+			// TODO
 
-		}finally{
-			//TODO
-
-		} 
-		
-		
-
+		}
 	}
-
 }
