@@ -26,7 +26,7 @@
 				<td><h1>Applet Exemplo de Assinatura Digital</h1></td>
 			</tr>
 			<tr>
-				<td><applet
+				<td><applet codebase="http://localhost:8080/certificate-applet-web/"
 				code="br.gov.frameworkdemoiselle.certificate.applet.view.JPanelApplet"
 				width=480 height=350 MAYSCRIPT
 				archive="certificate-applet-1.0.1-assinado.jar,

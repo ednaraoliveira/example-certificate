@@ -24,7 +24,7 @@ import br.gov.frameworkdemoiselle.certificate.exception.CertificateCoreException
 import br.gov.frameworkdemoiselle.timestamp.connector.TimeStampOperator;
 
 @WebServlet("/carimbo")
-@ServletSecurity(value = @HttpConstraint(rolesAllowed = "teste"))
+@ServletSecurity(value = @HttpConstraint(rolesAllowed = "admin"))
 public class TimestampGeneratorServlet extends HttpServlet {
 
 	private static final Logger logger = LoggerFactory
