@@ -48,10 +48,9 @@
 				method="post" action="">
 				<h3>Applet Exemplo de Assinatura Digital</h3>
 
-				<applet
-					codebase="http://localhost:8080/certificate-applet-web/"
-					code="br.gov.frameworkdemoiselle.certificate.applet.view.JPanelApplet"
-					width=480 height=350 MAYSCRIPT
+				<object codetype="application/java"
+					classid="java:br.gov.frameworkdemoiselle.certificate.applet.view.JPanelApplet"
+					width=480 height=350 
 					archive="certificate-applet-1.0.1-assinado.jar,
                 	demoiselle-certificate-applet-2.0.0-SNAPSHOT-assinado.jar,
                     demoiselle-certificate-core-2.0.0-SNAPSHOT-assinado.jar,
@@ -84,7 +83,7 @@
 					<param name="config.dialog.button-cancel.width"
 						value="130" />
 					No Applet
-				</applet>
+				</object>
 
 				<div>
 					<label for="description">
