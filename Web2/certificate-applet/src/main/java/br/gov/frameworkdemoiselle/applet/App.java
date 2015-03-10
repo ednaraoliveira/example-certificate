@@ -36,8 +36,6 @@ public class App extends AbstractAppletExecute {
             /* Carregando o conteudo a ser assinado */
             String documento = AbstractAppletExecute.getFormField(applet, "mainForm", "documento");
             
-            JSObject window = JSObject.getWindow(applet);
-            
             if (documento.length() == 0) {
                 JOptionPane.showMessageDialog(applet, "Por favor, escolha um documento para assinar", "Error", JOptionPane.ERROR_MESSAGE);
                 return;

@@ -24,7 +24,7 @@ import br.gov.frameworkdemoiselle.certificate.exception.CertificateCoreException
 import br.gov.frameworkdemoiselle.timestamp.connector.TimeStampOperator;
 
 @WebServlet("/carimbo")
-@ServletSecurity(value = @HttpConstraint(rolesAllowed = "admin"))
+//@ServletSecurity(value = @HttpConstraint(rolesAllowed = "admin"))
 public class TimestampGeneratorServlet extends HttpServlet {
 
 	private static final Logger logger = LoggerFactory
@@ -50,7 +50,7 @@ public class TimestampGeneratorServlet extends HttpServlet {
 		byte[] content = null;
 
 		String configName = "/home/01534562567/drivers.config";
-		String password = "";
+		String password = "qwaszx12!";
 
 		Provider p = new sun.security.pkcs11.SunPKCS11(configName);
 		Security.addProvider(p);

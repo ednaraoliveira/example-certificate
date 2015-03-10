@@ -28,7 +28,7 @@ public class AppTest {
 	public static void main(String[] args) {
 		try {
 			String configName = "/home/01534562567/drivers.config";
-			String password = "";
+			String password = "qwaszx12!";
 
 			Provider p = new sun.security.pkcs11.SunPKCS11(configName);
 			Security.addProvider(p);

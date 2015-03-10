@@ -8,6 +8,8 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.security.PrivateKey;
 import java.security.cert.Certificate;
+import java.util.Enumeration;
+import java.util.ResourceBundle;
 
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
@@ -23,37 +25,24 @@ public class MyTimestampGeneratorImpl implements TimeStampGenerator {
 
 	private static final Logger logger = LoggerFactory
 			.getLogger(MyTimestampGeneratorImpl.class);
-
+	private ResourceBundle bundle = ResourceBundle.getBundle("config");
+	
 	private byte[] content;
-
-	/**
-	 * Inicializa os atributos necessarios para obter o carimbo de tempo
-	 * 
-	 * @param content
-	 * @param privateKey
-	 * @param certificates
-	 * @throws CertificateCoreExceptionCredenciais
-	 */
+	
 
 	public void initialize(byte[] content, PrivateKey privateKey,
 			Certificate[] certificates) throws CertificateCoreException {
 		this.content = content;
 	}
 
-	/**
-	 * Envia a requisicao o conteudo para o serviço que vai retornar o carimbo
-	 * tempo
-	 * 
-	 * @return O carimbo de tempo retornado pelo serviço
-	 */
 	public byte[] generateTimeStamp() throws CertificateCoreException {
 
 		byte[] timestamp = null;
 		HttpURLConnection connection = null;
-
+		
 		try {
 			// Cria a conexão com o serviço que requisita o carimbo de Tempo
-			URL url = new URL("http://localhost:8080/certificate-applet-web/carimbo");
+			URL url = new URL(bundle.getString("url"));
 
 			connection = (HttpURLConnection) url.openConnection();
 
@@ -62,7 +51,7 @@ public class MyTimestampGeneratorImpl implements TimeStampGenerator {
 			connection.setDoInput(true);
 			connection.setDoOutput(true);
 			connection.setRequestProperty("Content-Type","application/octet-stream");
-
+			
 			// Envi o conteúdo
 			OutputStream os = connection.getOutputStream();
 			os.write(content);
@@ -109,6 +98,7 @@ public class MyTimestampGeneratorImpl implements TimeStampGenerator {
 				connection.disconnect();
 			}
 		}
+		
 		return timestamp;
 	}
 
