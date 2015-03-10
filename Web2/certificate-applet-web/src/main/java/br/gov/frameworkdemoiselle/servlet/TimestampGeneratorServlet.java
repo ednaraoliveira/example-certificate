@@ -2,10 +2,15 @@ package br.gov.frameworkdemoiselle.servlet;
 
 import java.io.IOException;
 import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
 import java.security.PrivateKey;
 import java.security.Provider;
 import java.security.Security;
+import java.security.UnrecoverableEntryException;
 import java.security.cert.Certificate;
+import java.security.cert.CertificateException;
 import java.util.Enumeration;
 
 import javax.servlet.ServletException;
@@ -24,7 +29,7 @@ import br.gov.frameworkdemoiselle.certificate.exception.CertificateCoreException
 import br.gov.frameworkdemoiselle.timestamp.connector.TimeStampOperator;
 
 @WebServlet("/carimbo")
-//@ServletSecurity(value = @HttpConstraint(rolesAllowed = "admin"))
+@ServletSecurity(value = @HttpConstraint(rolesAllowed = "admin"))
 public class TimestampGeneratorServlet extends HttpServlet {
 
 	private static final Logger logger = LoggerFactory
@@ -32,71 +37,45 @@ public class TimestampGeneratorServlet extends HttpServlet {
 
 	
 	private static final long serialVersionUID = 1L;
+	
+	private PrivateKey privateKey = null;
+	private Certificate[] certificates = null;
 
-	@Override
-	public void doGet(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException {
-		System.out.println("DoGET");
-		this.doPost(request, response);
-	}
-
+	
 	@Override
 	public void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 
 		
-		PrivateKey privateKey = null;
-		Certificate[] certificates = null;
-		byte[] content = null;
-
-		String configName = "/home/01534562567/drivers.config";
-		String password = "qwaszx12!";
-
-		Provider p = new sun.security.pkcs11.SunPKCS11(configName);
-		Security.addProvider(p);
-
-		KeyStore ks = null;
+		byte[] content;
+		byte[] timestamp;
+		
 		try {
 
-			ks = KeyStore.getInstance("PKCS11", "SunPKCS11-Provedor");
-
-			ks.load(null, password.toCharArray());
-
-			String alias = "";
-
-			KeyStore.ProtectionParameter protParam = new KeyStore.PasswordProtection(
-					password.toCharArray());
-
-			Enumeration<String> e = ks.aliases();
-			while (e.hasMoreElements()) {
-				alias = e.nextElement();
-				certificates = ks.getCertificateChain(alias);
-			}
-
-			KeyStore.PrivateKeyEntry pkEntry = (KeyStore.PrivateKeyEntry) ks
-					.getEntry(alias, protParam);
-			privateKey = pkEntry.getPrivateKey();
-
+			loadCertificate();
+			
 			//Lendo o Conteúdo enviado
-			String contentType = request.getContentType();
-			if ("application/octet-stream".equals(contentType)|| contentType.isEmpty() || "application/x-www-form-urlencoded".equals(contentType)) {
-				content = IOUtils.toByteArray(request.getInputStream());
-			} else{
-				response.setContentType("text/plain");
-				response.setStatus(415);
-			}
+			content = IOUtils.toByteArray(request.getInputStream());
 			
 			//requisitando um carimbo de tempo
-			TimeStampOperator timeStampOperator = new TimeStampOperator();
-			byte[] reqTimestamp = timeStampOperator.createRequest(privateKey,
-					certificates, content);
-
-			content = timeStampOperator.invoke(reqTimestamp);
-
-			response.setContentType("application/octet-stream");
-			response.getOutputStream().write(content);
-			response.getOutputStream().flush();
-			response.getOutputStream().close();
+			if (content.length > 0) {
+				TimeStampOperator timeStampOperator = new TimeStampOperator();
+				byte[] reqTimestamp = timeStampOperator.createRequest(privateKey,
+						certificates, content);
+	
+				timestamp = timeStampOperator.invoke(reqTimestamp);
+	
+				response.setContentType("application/octet-stream");
+				response.getOutputStream().write(timestamp);
+				response.getOutputStream().flush();
+				response.getOutputStream().close();
+			} else {
+				response.setContentType("text/plain");
+				response.setStatus(500);
+				response.getOutputStream().write("Conteúdo não enviado".getBytes());
+				response.getOutputStream().flush();
+				response.getOutputStream().close();				
+			}
 
 		} catch (CertificateCoreException e) {
 			response.setContentType("text/plain");
@@ -110,9 +89,46 @@ public class TimestampGeneratorServlet extends HttpServlet {
 			response.getOutputStream().write("Erro ao fazer load do certificado habilitado para requisitar carimbo de tempo".getBytes());
 			response.getOutputStream().flush();
 			response.getOutputStream().close();
-		} finally {
-			// TODO
-
 		}
 	}
+	
+	private void loadCertificate() throws Exception {
+		String configName = "/home/01534562567/drivers.config";
+		String password = "qwaszx12!";
+		String alias = "";
+
+		Provider p = new sun.security.pkcs11.SunPKCS11(configName);
+		Security.addProvider(p);
+
+		KeyStore ks = null;
+		
+		try {
+			ks = KeyStore.getInstance("PKCS11", "SunPKCS11-Provedor");
+			ks.load(null, password.toCharArray());
+
+			KeyStore.ProtectionParameter protParam = new KeyStore.PasswordProtection(password.toCharArray());
+
+			Enumeration<String> e = ks.aliases();
+			while (e.hasMoreElements()) {
+				alias = e.nextElement();
+				certificates = ks.getCertificateChain(alias);
+			}
+
+			KeyStore.PrivateKeyEntry pkEntry = (KeyStore.PrivateKeyEntry) ks.getEntry(alias, protParam);
+			privateKey = pkEntry.getPrivateKey();			
+		} catch (KeyStoreException e) {
+			throw new Exception(e.getMessage(), e.getCause());
+		} catch (NoSuchProviderException e) {
+			throw new Exception(e.getMessage(), e.getCause());
+		} catch (NoSuchAlgorithmException e) {
+			throw new Exception(e.getMessage(), e.getCause());
+		} catch (CertificateException e) {
+			throw new Exception(e.getMessage(), e.getCause());
+		} catch (IOException e) {
+			throw new Exception(e.getMessage(), e.getCause());
+		} catch (UnrecoverableEntryException e) {
+			throw new Exception(e.getMessage(), e.getCause());
+		}
+	}
+
 }
