@@ -8,12 +8,9 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.security.PrivateKey;
 import java.security.cert.Certificate;
-import java.util.Enumeration;
 import java.util.ResourceBundle;
 
 import org.apache.commons.io.IOUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import br.gov.frameworkdemoiselle.certificate.Priority;
 import br.gov.frameworkdemoiselle.certificate.exception.CertificateCoreException;
@@ -23,8 +20,6 @@ import br.gov.frameworkdemoiselle.timestamp.connector.TimeStampOperator;
 @Priority(Priority.MAX_PRIORITY)
 public class MyTimestampGeneratorImpl implements TimeStampGenerator {
 
-	private static final Logger logger = LoggerFactory
-			.getLogger(MyTimestampGeneratorImpl.class);
 	private ResourceBundle bundle = ResourceBundle.getBundle("config");
 	
 	private byte[] content;
@@ -52,22 +47,16 @@ public class MyTimestampGeneratorImpl implements TimeStampGenerator {
 			connection.setDoOutput(true);
 			connection.setRequestProperty("Content-Type","application/octet-stream");
 			
-			// Envi o conteúdo
+			// Envia o conteúdo
 			OutputStream os = connection.getOutputStream();
 			os.write(content);
 			os.flush();
 			os.close();
-
+			
 			// Trata o status da conexão
 			int status = connection.getResponseCode();
+			System.err.println(status + " - "+ bundle.getString("url"));
 			
-			if (status == 500) {
-				if (connection.getContentType().equals("text/plain")) {
-					String message = IOUtils.toString(connection.getErrorStream());
-					throw new CertificateCoreException(message);
-				}
-			}
-
 			if (status == 200) {
 				if (connection.getContentType().equals("application/octet-stream")) {
 					InputStream is = connection.getInputStream();
@@ -76,21 +65,24 @@ public class MyTimestampGeneratorImpl implements TimeStampGenerator {
 				}
 			}
 			
-			if (status == 403){
-				throw new CertificateCoreException("HTTP Status 403 - JBWEB000015: Access to the requested resource has been denied");
+			if (status == 500) {
+				if (connection.getContentType().equals("text/plain")) {
+					String message = IOUtils.toString(connection.getErrorStream());
+					throw new CertificateCoreException(message);
+				}
 			}
-			
-			if (status == 401){
-				throw new CertificateCoreException("HTTP Status 401");
+
+			if ((status == 403) || (status == 401)){
+				throw new CertificateCoreException("Acesso negado: " + bundle.getString("url"));
 			}
 
 			if (timestamp == null){
-				throw new CertificateCoreException("Carimbo de Tempo não foi gerado");
+				throw new CertificateCoreException("O carimbo de tempo não foi gerado");
 			}
 			
 			
 		} catch ( ConnectException e) {
-			throw new CertificateCoreException("Erro ao conectar ao serviço que solicita carimbo de tempo");
+			throw new CertificateCoreException("Erro ao conectar: " + bundle.getString("url"));
 		} catch ( IOException e) {
 			throw new RuntimeException(e);			
 		} finally {
@@ -98,7 +90,7 @@ public class MyTimestampGeneratorImpl implements TimeStampGenerator {
 				connection.disconnect();
 			}
 		}
-		
+
 		return timestamp;
 	}
 

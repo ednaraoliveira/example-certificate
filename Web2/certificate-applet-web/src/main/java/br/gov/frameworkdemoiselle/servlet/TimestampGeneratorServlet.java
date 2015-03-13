@@ -22,8 +22,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import br.gov.frameworkdemoiselle.certificate.exception.CertificateCoreException;
 import br.gov.frameworkdemoiselle.timestamp.connector.TimeStampOperator;
@@ -32,10 +30,6 @@ import br.gov.frameworkdemoiselle.timestamp.connector.TimeStampOperator;
 @ServletSecurity(value = @HttpConstraint(rolesAllowed = "admin"))
 public class TimestampGeneratorServlet extends HttpServlet {
 
-	private static final Logger logger = LoggerFactory
-			.getLogger(TimestampGeneratorServlet.class);
-
-	
 	private static final long serialVersionUID = 1L;
 	
 	private PrivateKey privateKey = null;
@@ -84,15 +78,17 @@ public class TimestampGeneratorServlet extends HttpServlet {
 			response.getOutputStream().flush();
 			response.getOutputStream().close();
 		} catch (Exception e) {
+			e.printStackTrace();
 			response.setContentType("text/plain");
 			response.setStatus(500);
-			response.getOutputStream().write("Erro ao fazer load do certificado habilitado para requisitar carimbo de tempo".getBytes());
+			response.getOutputStream().write(e.getMessage().getBytes());
 			response.getOutputStream().flush();
 			response.getOutputStream().close();
 		}
 	}
 	
 	private void loadCertificate() throws Exception {
+		
 		String configName = "/home/01534562567/drivers.config";
 		String password = "qwaszx12!";
 		String alias = "";
