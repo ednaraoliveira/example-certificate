@@ -90,7 +90,7 @@ public class TimestampGeneratorServlet extends HttpServlet {
 	private void loadCertificate() throws Exception {
 		
 		String configName = "/home/01534562567/drivers.config";
-		String password = "qwaszx12!";
+		String password = "***";
 		String alias = "";
 
 		Provider p = new sun.security.pkcs11.SunPKCS11(configName);

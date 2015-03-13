@@ -76,6 +76,10 @@ public class MyTimestampGeneratorImpl implements TimeStampGenerator {
 				throw new CertificateCoreException("Acesso negado: " + bundle.getString("url"));
 			}
 
+			if ((status == 404)){
+				throw new CertificateCoreException("URL não encontrada: " + bundle.getString("url"));
+			}			
+			
 			if (timestamp == null){
 				throw new CertificateCoreException("O carimbo de tempo não foi gerado");
 			}
