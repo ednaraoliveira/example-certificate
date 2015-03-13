@@ -19,7 +19,7 @@ import org.slf4j.LoggerFactory;
 import br.gov.frameworkdemoiselle.certificate.keystore.loader.factory.KeyStoreLoaderFactory;
 import br.gov.frameworkdemoiselle.certificate.signer.factory.PKCS7Factory;
 import br.gov.frameworkdemoiselle.certificate.signer.pkcs7.PKCS7Signer;
-import br.gov.frameworkdemoiselle.certificate.signer.pkcs7.bc.policies.ADRBCMS_2_1;
+import br.gov.frameworkdemoiselle.policy.engine.factory.PolicyFactory.Policies;
 
 public class CertificateSignerWin {
 
@@ -27,7 +27,7 @@ public class CertificateSignerWin {
 
 	public static void main(String[] args) throws KeyStoreException {
 
-		String PIN = "qwaszx12!";
+		String PIN = "";
 		Certificate[] certificates = null;
 		/* Obtendo a chave privada */
 
@@ -48,14 +48,13 @@ public class CertificateSignerWin {
 			PKCS7Signer signer = PKCS7Factory.getInstance().factoryDefault();
 			signer.setCertificates(keyStore.getCertificateChain(alias));
 			signer.setPrivateKey((PrivateKey) keyStore.getKey(alias, null));
-			//signer.setSignaturePolicy(Policies.AD_RB_CADES_2_1);
-			signer.setSignaturePolicy(new ADRBCMS_2_1());
+			signer.setSignaturePolicy(Policies.AD_RT_CADES_2_1);
 			signer.setAttached(true);
-
+			
 			/* Realiza a assinatura do conteudo */
 			logger.info("Efetuando a  assinatura do conteudo");
-			//byte[] signed = signer.doSign(content);
-			byte[] signed = signer.signer(content);
+			byte[] signed = signer.doSign(content);
+			
 			/* Valida o conteudo */
 			logger.info("Efetuando a validacao da assinatura.");
 			boolean checked = signer.check(content, signed);

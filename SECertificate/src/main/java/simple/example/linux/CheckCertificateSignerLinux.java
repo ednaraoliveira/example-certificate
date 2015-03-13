@@ -25,7 +25,7 @@ public class CheckCertificateSignerLinux {
 
 		try {  
 
-			FileInputStream inputStream = new FileInputStream("assinatura.p7s");
+			FileInputStream inputStream = new FileInputStream("assinaturaRT.p7s");
 			try {
 				signed = IOUtils.toByteArray(inputStream);
 			} finally {
@@ -39,7 +39,7 @@ public class CheckCertificateSignerLinux {
 
 			/* Valida o conteudo */
 			logger.info("Efetuando a validacao da assinatura.");
-			boolean checked = signer.check(null, signed);
+			boolean checked = signer.check(content, signed);
 
 			if (checked) {
 				logger.info("A assinatura foi validada.");

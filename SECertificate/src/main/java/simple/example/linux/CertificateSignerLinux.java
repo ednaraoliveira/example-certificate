@@ -20,10 +20,9 @@ import java.security.cert.X509Certificate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import br.gov.frameworkdemoiselle.certificate.extension.BasicCertificate;
 import br.gov.frameworkdemoiselle.certificate.signer.factory.PKCS7Factory;
 import br.gov.frameworkdemoiselle.certificate.signer.pkcs7.PKCS7Signer;
-import br.gov.frameworkdemoiselle.certificate.signer.pkcs7.bc.policies.ADRBCMS_2_1;
+import br.gov.frameworkdemoiselle.policy.engine.factory.PolicyFactory.Policies;
 
 public class CertificateSignerLinux {
 
@@ -61,13 +60,12 @@ public class CertificateSignerLinux {
 			PKCS7Signer signer = PKCS7Factory.getInstance().factoryDefault();
 			signer.setCertificates(keyStore.getCertificateChain(alias));
 			signer.setPrivateKey((PrivateKey) keyStore.getKey(alias, null));
-			//signer.setAlgorithm(SignerAlgorithmEnum.SHA256withRSA);
-			signer.setSignaturePolicy(new ADRBCMS_2_1());
+			signer.setSignaturePolicy(Policies.AD_RT_CADES_2_1);
 			signer.setAttached(true);
 			
 			/* Realiza a assinatura do conteudo */
 			logger.info("Efetuando a  assinatura do conteudo");
-			byte[] signed = signer.signer(content);
+			byte[] signed = signer.doSign(content);
 			
 			/* Valida o conteudo */
 			logger.info("Efetuando a validacao da assinatura.");
@@ -81,7 +79,7 @@ public class CertificateSignerLinux {
 			
 			/* Exportando a assintatura */
 			logger.info("Exportando a assintatura.");
-			File file = new File("assinatura.p7s"); //Criamos um nome para o arquivo  
+			File file = new File("assinaturaRT.p7s"); //Criamos um nome para o arquivo  
 			BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(file)); //Criamos o arquivo  
 			bos.write(signed); //Gravamos os bytes lá  
 			bos.close(); //Fechamos o stream.  
