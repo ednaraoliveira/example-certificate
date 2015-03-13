@@ -1,0 +1,18 @@
+@CHARSET "UTF-8";
+
+label {
+	display: block;
+	margin-bottom: -1em;
+}
+
+input {
+	display: block;
+	position: relative;
+	left: 7em;
+	top: -0.5em;
+}
+
+input[type="file"]{
+    border: 1px solid #cccccc;
+    padding: 5px;
+}
