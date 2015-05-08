@@ -23,7 +23,6 @@ import org.slf4j.LoggerFactory;
 import br.gov.frameworkdemoiselle.certificate.signer.SignerException;
 import br.gov.frameworkdemoiselle.certificate.signer.factory.PKCS7Factory;
 import br.gov.frameworkdemoiselle.certificate.signer.pkcs7.PKCS7Signer;
-import br.gov.frameworkdemoiselle.policy.engine.factory.PolicyFactory.Policies;
 
 
 public class CertificateSignerLinux {
@@ -64,7 +63,7 @@ public class CertificateSignerLinux {
 			PKCS7Signer signer = PKCS7Factory.getInstance().factoryDefault();
 			signer.setCertificates(keyStore.getCertificateChain(alias));
 			signer.setPrivateKey((PrivateKey) keyStore.getKey(alias, null));
-			signer.setSignaturePolicy(Policies.AD_RT_CADES_2_1);
+			signer.setSignaturePolicy(Policies.AD_RB_CADES_2_1);
 			signer.setAttached(true);
 
 			/* Realiza a assinatura do conteudo */
