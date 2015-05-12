@@ -20,7 +20,7 @@ public class DadosCertificadoA1 {
 
 	public static void main(String[] args) throws KeyStoreException {
 
-		String PIN = "teste123";
+		String PIN = "*****";
 
 		String alias;
 		try {
