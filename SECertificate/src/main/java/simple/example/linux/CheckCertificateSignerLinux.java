@@ -28,7 +28,7 @@ public class CheckCertificateSignerLinux {
 
 		try {
 
-			FileInputStream inputStream = new FileInputStream("assinatura.p7s");
+			FileInputStream inputStream = new FileInputStream("assinaturaV1.p7s");
 			try {
 				signed = IOUtils.toByteArray(inputStream);
 			} finally {
