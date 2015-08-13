@@ -79,7 +79,7 @@ public class CertificateSignerLinux {
 			}
 
 			logger.info("Exportando a assintatura.");
-			File file = new File("assinaturaV201RB.p7s"); 
+			File file = new File("assinaturaV200RB.p7s"); 
 			BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(file)); // Criamos o arquivo
 			bos.write(signed); // Gravamos os bytes lá
 			bos.close(); // Fechamos o stream.
