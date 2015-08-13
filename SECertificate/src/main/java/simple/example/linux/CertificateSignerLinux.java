@@ -38,7 +38,6 @@ public class CertificateSignerLinux {
 		String configName = "/home/01534562567/drivers.config";
 		String PIN = "";
 		Certificate[] certificates = null;
-		byte[] content = null;
 
 
 		String alias;
@@ -57,16 +56,7 @@ public class CertificateSignerLinux {
 					PIN.toCharArray());
 			logger.info("privateKey ......: {}", privateKey);
 
-			X509Certificate c = (X509Certificate) keyStore
-					.getCertificate(alias);
-
-			FileInputStream inputStream2 = new FileInputStream("motor.jpg");
-			try {
-				content = IOUtils.toByteArray(inputStream2);
-			} finally {
-				inputStream2.close();
-			}
-
+			byte[] content = "SERPRO".getBytes();
 
 			PKCS7Signer signer = PKCS7Factory.getInstance().factoryDefault();
 			signer.setCertificates(keyStore.getCertificateChain(alias));
