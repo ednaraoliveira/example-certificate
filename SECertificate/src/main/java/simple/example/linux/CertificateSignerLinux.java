@@ -36,7 +36,7 @@ public class CertificateSignerLinux {
 	public static void main(String[] args) throws KeyStoreException {
 
 		String configName = "/home/01534562567/drivers.config";
-		String PIN = "qwaszx12!";
+		String PIN = "";
 		Certificate[] certificates = null;
 		byte[] content = null;
 
