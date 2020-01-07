@@ -20,8 +20,7 @@ import java.security.cert.X509Certificate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import br.gov.frameworkdemoiselle.certificate.keystore.loader.factory.KeyStoreLoaderFactory;
-import br.gov.frameworkdemoiselle.certificate.signer.SignerAlgorithmEnum;
+import br.gov.frameworkdemoiselle.certificate.extension.BasicCertificate;
 import br.gov.frameworkdemoiselle.certificate.signer.factory.PKCS7Factory;
 import br.gov.frameworkdemoiselle.certificate.signer.pkcs7.PKCS7Signer;
 import br.gov.frameworkdemoiselle.certificate.signer.pkcs7.bc.policies.ADRBCMS_2_1;
@@ -49,7 +48,6 @@ public class CertificateSignerLinux {
             KeyStore keyStore = KeyStore.getInstance("PKCS11", "SunPKCS11-Provedor");
             keyStore.load(null, PIN.toCharArray());
 
-			
 			alias = (String) keyStore.aliases().nextElement();
 			logger.info("alias ...........: {}", alias);
 			PrivateKey privateKey = (PrivateKey) keyStore.getKey(alias, PIN.toCharArray());
@@ -57,20 +55,28 @@ public class CertificateSignerLinux {
 
 			X509Certificate c = (X509Certificate) keyStore.getCertificate(alias);
 
+			
+            BasicCertificate bc = new BasicCertificate(c);
+            logger.info("Nome....................[{}]", bc.getNome());
+            logger.info("E-mail..................[{}]", bc.getEmail());
+            logger.info("Numero de serie.........[{}]", bc.getSerialNumber());
+            logger.info("Nivel do Certificado....[{}]", bc.getNivelCertificado());
+			
+			
 			byte[] content = "SERPRO".getBytes();
-
+			
 			/* Parametrizando o objeto doSign */
 			PKCS7Signer signer = PKCS7Factory.getInstance().factoryDefault();
 			signer.setCertificates(keyStore.getCertificateChain(alias));
 			signer.setPrivateKey((PrivateKey) keyStore.getKey(alias, null));
-			signer.setAlgorithm(SignerAlgorithmEnum.SHA256withRSA);
+			//signer.setAlgorithm(SignerAlgorithmEnum.SHA256withRSA);
 			signer.setSignaturePolicy(new ADRBCMS_2_1());
 			signer.setAttached(true);
-
+			
 			/* Realiza a assinatura do conteudo */
 			logger.info("Efetuando a  assinatura do conteudo");
 			byte[] signed = signer.signer(content);
-
+			
 			/* Valida o conteudo */
 			logger.info("Efetuando a validacao da assinatura.");
 			boolean checked = signer.check(content, signed);

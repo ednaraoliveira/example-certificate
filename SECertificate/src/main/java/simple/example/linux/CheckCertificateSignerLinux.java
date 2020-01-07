@@ -1,27 +1,16 @@
 package simple.example.linux;
 
-import java.io.BufferedOutputStream;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
-import java.security.NoSuchProviderException;
-import java.security.PrivateKey;
-import java.security.UnrecoverableKeyException;
-import java.security.cert.Certificate;
-import java.security.cert.CertificateException;
 
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import br.gov.frameworkdemoiselle.certificate.signer.SignerAlgorithmEnum;
 import br.gov.frameworkdemoiselle.certificate.signer.factory.PKCS7Factory;
 import br.gov.frameworkdemoiselle.certificate.signer.pkcs7.PKCS7Signer;
-import br.gov.frameworkdemoiselle.certificate.signer.pkcs7.bc.policies.ADRBCMS_2_1;
 
 public class CheckCertificateSignerLinux {
 
@@ -30,15 +19,11 @@ public class CheckCertificateSignerLinux {
 
 	public static void main(String[] args) throws KeyStoreException {
 
-		String configName = "/home/01534562567/drivers.config";
-		String PIN = "******";
-		Certificate[] certificates = null;
 		byte[] signed = null;
 
 		/* Obtendo a chave privada */
 
-		String alias;
-		try {
+		try {  
 
 			FileInputStream inputStream = new FileInputStream("assinatura.p7s");
 			try {
@@ -51,10 +36,11 @@ public class CheckCertificateSignerLinux {
 
 			/* Objeto doSign */
 			PKCS7Signer signer = PKCS7Factory.getInstance().factoryDefault();
+			//signer.setSignaturePolicy(new ADRBCMS_2_0());
 
 			/* Valida o conteudo */
 			logger.info("Efetuando a validacao da assinatura.");
-			boolean checked = signer.check(content, signed);
+			boolean checked = signer.check(null, signed);
 
 			if (checked) {
 				logger.info("A assinatura foi validada.");
